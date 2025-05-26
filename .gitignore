@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*build/
+*develop-eggs/
+*dist/
+*downloads/
+*eggs/
+*.egg-info/
+*htmlcov/
+*.manifest
+*MANIFEST
+*.spec
+*pip-log.txt
+*pip-delete-this-directory.txt
+*pip-selfcheck.json
+*nosetests.xml
+*coverage.xml
+*.cover
+*.hypothesis/
+*.pytest_cache/
+*env/
+*venv/
+*ENV/
+*VENV/
+*env.bak/
+*venv.bak/
+cwmenv/
+
+# Keras & TensorFlow
+# *.keras # User wants to exclude all .keras models
+# *.h5
+# *.pb
+# *.index
+# *.data-00000-of-00001
+# Explicitly ignore all .keras files in the root and subdirectories
+*.keras
+**/*.keras
+
+# Logs
+logs/
+*.log
+# reward_log.png # Exclude generated images
+# tetris_custom_metric_submit*.csv # Exclude submission files
+
+# IDE / System
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Specific files to ignore if they exist at root
+model_episode_*.keras
+best_backup_*.keras
+# best.keras # Keep the main best.keras file, per user request
+reward_log.png
+tetris_custom_metric_submit*.csv
