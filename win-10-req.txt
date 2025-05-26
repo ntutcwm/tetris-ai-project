@@ -1,0 +1,109 @@
+# Windows 10 環境設定指南 (適用於 tetris-ai-project)
+
+本文件提供在 Windows 10 系統上設定執行 `tetris-ai-project`所需環境的步驟，包含 Python、NVIDIA CUDA Toolkit 和 cuDNN 的安裝。
+
+## 1. 安裝 Python
+
+建議安裝 Python 3.8 (專案測試版本) 或更新的 3.x 版本。
+
+1.  **下載 Python 安裝程式:**
+    前往 Python 官方網站下載頁面：[https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
+    選擇適合您系統的 Python 3.8 (或更新版本) 的 Windows x86-64 executable installer。
+
+2.  **執行安裝程式:**
+    *   執行下載的 `.exe` 檔案。
+    *   **重要:** 在安裝程式的第一個畫面，務必勾選 "Add Python to PATH" (或類似選項，例如 "Add Python 3.x to PATH")。
+    *   選擇 "Install Now" 進行預設安裝，或選擇 "Customize installation" 進行自訂。
+
+3.  **驗證安裝:**
+    開啟命令提示字元 (CMD) 或 PowerShell，輸入以下指令：
+    ```bash
+    python --version
+    pip --version
+    ```
+    應能看到已安裝的 Python 和 pip 版本。
+
+## 2. 安裝 NVIDIA CUDA Toolkit
+
+TensorFlow 2.13.1 (專案使用的版本) 通常與 CUDA Toolkit 11.8 相容。請先確認您的 NVIDIA GPU 是否支援 CUDA。
+
+1.  **確認 GPU 驅動程式:**
+    確保您的 NVIDIA GPU 驅動程式是最新版本。您可以從 NVIDIA 官方網站下載：[https://www.nvidia.com/Download/index.aspx](https://www.nvidia.com/Download/index.aspx)
+
+2.  **下載 CUDA Toolkit 11.8:**
+    前往 NVIDIA CUDA Toolkit Archive：[https://developer.nvidia.com/cuda-11-8-0-download-archive](https://developer.nvidia.com/cuda-11-8-0-download-archive)
+    選擇以下選項：
+    *   Operating System: Windows
+    *   Architecture: x86_64
+    *   Version: 10 (或您的 Windows 版本)
+    *   Installer Type: exe (local)
+    下載安裝程式。
+
+3.  **執行 CUDA Toolkit 安裝程式:**
+    *   執行下載的 `.exe` 檔案。
+    *   選擇 "自訂 (進階)" 安裝選項。
+    *   在元件選擇中，確保 CUDA Development、CUDA Runtime 等核心元件被選中。如果您已有較新的驅動程式，可以取消勾選驅動程式相關的安裝選項，以避免覆蓋。
+    *   依照指示完成安裝。預設安裝路徑通常是 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8`。
+
+4.  **驗證 CUDA 安裝 (可選):**
+    安裝完成後，可以開啟命令提示字元並輸入：
+    ```bash
+    nvcc --version
+    ```
+    如果安裝成功，會顯示 CUDA 編譯器的版本資訊。
+
+## 3. 安裝 NVIDIA cuDNN
+
+cuDNN (CUDA Deep Neural Network library) 是用於深度學習的 GPU 加速函式庫。需要配合已安裝的 CUDA Toolkit 版本。對於 CUDA 11.8，通常使用 cuDNN 8.x 版本 (例如 cuDNN v8.6.0 for CUDA 11.x 或更新的相容版本)。
+
+1.  **下載 cuDNN:**
+    *   前往 NVIDIA cuDNN 下載頁面：[https://developer.nvidia.com/rdp/cudnn-archive](https://developer.nvidia.com/rdp/cudnn-archive)
+    *   您可能需要註冊 NVIDIA Developer Program 帳戶才能下載。
+    *   找到與您的 CUDA Toolkit 版本 (例如 CUDA 11.8) 相容的 cuDNN 版本。例如 "Download cuDNN v8.9.7 (December 5th, 2023), for CUDA 11.x"。
+    *   下載適用於 Windows 的 cuDNN Library (通常是一個 ZIP 檔案)。
+
+2.  **安裝 cuDNN:**
+    cuDNN 的安裝方式是將下載的 ZIP 檔案中的內容解壓縮，並將特定檔案複製到 CUDA Toolkit 的安裝目錄中。
+    *   解壓縮下載的 cuDNN ZIP 檔案。您會看到包含 `bin`, `include`, `lib` 等資料夾。
+    *   將解壓縮後 cuDNN 資料夾中的檔案複製到 CUDA Toolkit 的對應資料夾中：
+        *   將 cuDNN `bin` 資料夾中的 `cudnn*.dll` 檔案複製到 CUDA Toolkit 的 `bin` 資料夾 (例如 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin`)。
+        *   將 cuDNN `include` 資料夾中的 `cudnn*.h` 檔案複製到 CUDA Toolkit 的 `include` 資料夾 (例如 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include`)。
+        *   將 cuDNN `lib\x64` 資料夾中的 `cudnn*.lib` 檔案複製到 CUDA Toolkit 的 `lib\x64` 資料夾 (例如 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\lib\x64`)。
+
+3.  **設定環境變數 (重要):**
+    為了讓系統能夠找到 CUDA 和 cuDNN，需要將相關路徑加入到系統的環境變數 `PATH` 中。
+    *   在 Windows 搜尋中輸入 "環境變數"，然後選擇 "編輯系統環境變數"。
+    *   在 "系統內容" 視窗中，點選 "環境變數..." 按鈕。
+    *   在 "系統變數" 區塊中，找到名為 `Path` (或 `PATH`) 的變數，選取它，然後點選 "編輯..."。
+    *   點選 "新增"，然後加入以下路徑 (請根據您的實際安裝路徑調整 CUDA 版本號 `v11.8`)：
+        *   `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin`
+        *   `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\libnvvp` (如果存在)
+    *   點選 "確定" 儲存變更。
+    *   **重新啟動您的電腦** 以確保環境變數變更生效。
+
+## 4. 安裝專案相依套件
+
+完成以上步驟後，您可以安裝 `tetris-ai-project` 的 Python 相依套件。
+
+1.  **開啟命令提示字元或 PowerShell。**
+2.  **導覽至專案根目錄 (例如 `cd path\to\tetris-ai-project`)。**
+3.  **(建議) 建立並啟用虛擬環境:**
+    ```bash
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
+4.  **安裝相依套件:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## 5. 執行專案
+
+設定完成後，您可以依照專案 `README.md` 中的指示執行訓練或預訓練模型。例如，執行預訓練模型：
+```bash
+python tetris_ai_nuno_faria/run_model.py best.keras
+```
+
+**疑難排解:**
+*   如果在執行 TensorFlow 時遇到 CUDA/cuDNN 相關錯誤，請再次確認 CUDA 和 cuDNN 版本是否與 TensorFlow 相容，以及環境變數是否已正確設定並生效 (重新啟動電腦後)。
+*   NVIDIA 官方文件是解決 CUDA 和 cuDNN 安裝問題的最佳資源。
