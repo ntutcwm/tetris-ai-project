@@ -22,7 +22,7 @@ def dqn():
     epsilon_stop_episode = 450 # at what episode the random exploration stops (600 * 0.75)
     mem_size = 20000 # maximum number of steps stored by the agent (increased from 1000)
     discount = 0.95 # discount in the Q-learning formula (see DQNAgent)
-    batch_size = 512 # number of actions to consider in each training (increased from 128)
+    batch_size = 256 # number of actions to consider in each training (decreased from 512)
     epochs = 1 # number of epochs per training
     render_every = 100 # renders the gameplay every x episodes (increased from 50)
     render_delay = None # delay added to render each frame (None for no delay)

@@ -111,22 +111,52 @@ class DQNAgent:
             return self.predict_value(state)
 
 
-    def best_state(self, states):
-        '''Returns the best state for a given collection of states'''
-        max_value = None
-        best_state = None
+    def best_state(self, states): # states is an iterable of state representations (e.g., lists or tuples)
+        '''Returns the best state for a given collection of states using batched prediction.'''
+        
+        states_list = list(states) # Convert iterable to list to handle empty cases and allow indexing
+        if not states_list:
+            return None # No states to choose from
 
-        if random.random() <= self.epsilon:
-            return random.choice(list(states))
-
+        # Epsilon check for exploration (self.epsilon is 0 in run_model.py, so this path won't be taken there)
+        if hasattr(self, 'epsilon') and self.epsilon > 0 and random.random() <= self.epsilon:
+            return random.choice(states_list)
         else:
-            for state in states:
-                value = self.predict_value(np.reshape(state, [1, self.state_size]))
-                if not max_value or value > max_value:
-                    max_value = value
-                    best_state = state
+            # Prepare batch_input.
+            # Each state in states_list is expected to be a list/tuple of features,
+            # as returned by env._get_board_props().
+            # The model expects input of shape (batch_size, state_size).
+            
+            # Convert list of states (which are lists/tuples of features) into a 2D NumPy array
+            batch_input_np = np.array(states_list)
 
-        return best_state
+            # Ensure batch_input_np is 2D, even if only one state was passed.
+            # self.state_size is the number of features.
+            if batch_input_np.ndim == 1 and len(states_list) == 1:
+                 # This case handles a single state, ensuring it's [1, state_size]
+                 batch_input_np = np.reshape(batch_input_np, [1, self.state_size])
+            elif batch_input_np.ndim == 1 and len(states_list) > 1 and batch_input_np.shape[0] == self.state_size:
+                 # This handles an edge case where states_list might be a single state misinterpreted as multiple features.
+                 # This should ideally not happen if states_list contains multiple state vectors.
+                 # For safety, if it's a flat list matching state_size, treat as single sample.
+                 batch_input_np = np.reshape(batch_input_np, [1, self.state_size])
+
+
+            # Perform batch prediction
+            # self.model.predict returns an array of shape (num_states, 1)
+            predicted_values = self.model.predict(batch_input_np, verbose=0)
+
+            # Find the index of the state with the maximum predicted value.
+            # predicted_values[:, 0] flattens it to a 1D array of scores if needed,
+            # or directly use argmax if the output is already (num_states,).
+            # Given model's last layer is Dense(1, ...), output is (num_states, 1).
+            if predicted_values.ndim > 1 and predicted_values.shape[1] == 1:
+                best_idx = np.argmax(predicted_values[:, 0])
+            else: # Should be (num_states,)
+                best_idx = np.argmax(predicted_values)
+            
+            # Return the corresponding state from the original list
+            return states_list[best_idx]
 
 
     def train(self, batch_size=32, epochs=3):
