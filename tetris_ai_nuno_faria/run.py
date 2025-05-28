@@ -1,5 +1,5 @@
 import tensorflow as tf
-if not tf.config.list_physical_devices('GPU'):
+if not tf.config.list_physical_devices('CPU'):
     raise RuntimeError("CUDA GPU is not available. Please ensure CUDA is properly installed and configured.")
 
 from dqn_agent import DQNAgent
