@@ -3,8 +3,8 @@ import csv
 import tensorflow as tf
 import datetime
 
-if not tf.config.list_physical_devices('GPU'):
-    raise RuntimeError("CUDA GPU is not available. Please ensure CUDA is properly installed and configured.")
+# if not tf.config.list_physical_devices('GPU'):
+#     raise RuntimeError("CUDA GPU is not available. Please ensure CUDA is properly installed and configured.")
 
 if len(sys.argv) < 2:
     exit("Missing model file")
