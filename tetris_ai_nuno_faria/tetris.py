@@ -379,6 +379,8 @@ class Tetris:
         img = Image.fromarray(img, 'RGB')
         img = img.resize((Tetris.BOARD_WIDTH * 25, Tetris.BOARD_HEIGHT * 25), Image.NEAREST)
         img = np.array(img)
-        cv2.putText(img, str(self.score), (22, 22), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 1)
+        display_text = f"Lines: {self.total_lines_cleared} Steps: {self.played_steps}"
+        # Adjusted position (10, 22) and font size (0.6) for potentially longer text
+        cv2.putText(img, display_text, (10, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
         cv2.imshow('image', np.array(img))
         cv2.waitKey(1)
